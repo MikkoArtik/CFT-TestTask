@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+    dbase-service:
+        build:
+            context: ./dbase-service
+            dockerfile: Dockerfile
+        image: cft-dbase-image
+        container_name: cft-dbase-container
+        environment:
+            - POSTGRES_HOST=dbase-service
+            - POSTGRES_PORT=5678
+            - POSTGRES_USER=mikko
+            - POSTGRES_PASSWORD=masterkey
+            - POSTGRES_DB=staff-dbase
+        volumes:
+            - ./db:/var/lib/postgresql/data
+        ports:
+            - "5555:5678"
+        command: -p 5678
+        healthcheck:
+            test: [ "CMD-SHELL",
+                    "pg_isready 
+                    -h metastorage-dbase-server 
+                    -p 5678 
+                    -d test-dbase 
+                    -U mikko"
+            ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
