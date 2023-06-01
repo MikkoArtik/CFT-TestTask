@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 
 __all__ = [
     'Response',
+    'User',
 ]
 
 
@@ -30,3 +31,15 @@ class Response(BaseModel):
         """Model configuration."""
 
         allow_population_by_field_name = True
+
+
+class User(BaseModel):
+    """Model with user information.
+
+    Args:
+        login: user login
+        password: user password
+
+    """
+    login: str = Field(alias='Login', min_length=5, max_length=20)
+    password: str = Field(alias='Password', min_length=1, max_length=10)
