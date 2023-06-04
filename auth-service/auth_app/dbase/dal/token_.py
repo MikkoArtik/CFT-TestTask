@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from auth_app import models
 from auth_app.dbase import orm
 from auth_app.dbase.dal.base import BaseTableDAL
 
@@ -39,24 +40,7 @@ class TokenDAL(BaseTableDAL):
         await self.session.execute(query)
         return await self.is_success_changing_query()
 
-    async def is_valid(self, token: str) -> bool:
-        """Check validation token by value.
-
-        Args:
-            token: str
-
-        Returns: bool
-
-        """
-        query = select(orm.Token).where(orm.Token.token == token)
-        record = await self.session.execute(query)
-        record_orm = record.scalar()
-        if not record_orm:
-            return False
-
-        return datetime.now() < record_orm.expires
-
-    async def get_by_user_id(self, id_: int) -> str:
+    async def get_by_user_id(self, id_: int) -> models.Token:
         """Return token by user id.
 
         Args:
