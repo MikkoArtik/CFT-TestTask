@@ -87,7 +87,7 @@ class TokenDAL(BaseDAL):
             is_create = True
         else:
             if not current_token.is_valid:
-                await self.delete(token=current_token.token)
+                await self.delete(token_value=current_token.value)
                 is_create = True
 
         if is_create:
