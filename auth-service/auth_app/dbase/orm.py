@@ -55,8 +55,8 @@ class Token(base):
         index=True,
         autoincrement=True
     )
-    token = Column(
-        name='token',
+    value = Column(
+        name='value',
         type_=UUID(as_uuid=False),
         nullable=False,
         unique=True,
@@ -105,6 +105,6 @@ class Salary(base):
         type_=Integer,
         nullable=False
     )
-    staff = relationship(argument='User')
+    user = relationship(argument='User')
 
     __tablename__ = 'salary'
