@@ -1,21 +1,20 @@
 """Module with SQLAlchemy models."""
 
 import sqlalchemy
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, Date, DateTime, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import declarative_base, relationship
 
 __all__ = [
-    'UserTable',
+    'User',
     'Token',
-    'Staff',
     'Salary',
 ]
 
 base = declarative_base()
 
 
-class UserTable(base):
+class User(base):
     """User information table."""
 
     id_ = Column(
@@ -24,6 +23,11 @@ class UserTable(base):
         primary_key=True,
         index=True,
         autoincrement=True
+    )
+    name = Column(
+        name='name',
+        type_=String(length=50),
+        nullable=False,
     )
     login = Column(
         name='login',
@@ -69,35 +73,9 @@ class Token(base):
         type_=Integer,
         nullable=False
     )
-    user = relationship(argument='User', back_populates='parent')
+    user = relationship(argument='User')
 
     __tablename__ = 'tokens'
-
-
-class Staff(base):
-    """Staff information table."""
-
-    id_ = Column(
-        name='id',
-        type_=Integer,
-        primary_key=True,
-        index=True,
-        autoincrement=True
-    )
-    name = Column(
-        name='name',
-        type_=String(length=50),
-        nullable=False,
-    )
-    user_id = Column(
-        ForeignKey('users.id'),
-        name='user_id',
-        type_=Integer,
-        nullable=False
-    )
-    user = relationship(argument='User', back_populates='parent')
-
-    __tablename__ = 'staff'
 
 
 class Salary(base):
@@ -116,17 +94,17 @@ class Salary(base):
         nullable=False,
         default=0
     )
-    increase_datetime = Column(
-        name='increase_datetime',
-        type_=DateTime,
+    target_date = Column(
+        name='target_date',
+        type_=Date,
         nullable=False
     )
-    staff_id = Column(
-        ForeignKey('staff.id'),
-        name='staff_id',
+    user_id = Column(
+        ForeignKey('users.id'),
+        name='user_id',
         type_=Integer,
         nullable=False
     )
-    staff = relationship(argument='Staff', back_populates='parent')
+    staff = relationship(argument='User')
 
     __tablename__ = 'salary'
