@@ -51,7 +51,7 @@ class Response(CustomBaseModel):
     data: List = Field(alias='Data', default=[])
 
 
-class User(BaseModel):
+class User(CustomBaseModel):
     """Model with user information.
 
     Args:
@@ -83,12 +83,12 @@ class Token(CustomBaseModel):
         return datetime.now() < self.expires
 
 
-class ActiveUser(BaseModel):
-    user_id: int = Field(alias='UserID')
+class ActiveUser(CustomBaseModel):
+    id_: int = Field(alias='UserID')
     name: str = Field(alias='Name')
 
 
-class SalaryInfo(BaseModel):
+class SalaryInfo(CustomBaseModel):
     user_id: int = Field(alias='UserID')
     name: str = Field(alias='Name')
     salary: int = Field(alias='Salary')
