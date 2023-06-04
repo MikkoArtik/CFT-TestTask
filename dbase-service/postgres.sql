@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users(
 
 CREATE TABLE IF NOT EXISTS tokens(
     id SERIAL PRIMARY KEY,
-    token UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
+    value UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
     expires TIMESTAMP NOT NULL,
     user_id INTEGER NOT NULL,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
