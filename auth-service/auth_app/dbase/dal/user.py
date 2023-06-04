@@ -84,12 +84,12 @@ class UserDAL(BaseTableDAL):
         Returns: bool
 
         """
-        query = select(orm.UserTable).where(
-            func.lower(orm.UserTable.login) == login.lower()
+        query = select(orm.User).where(
+            func.lower(orm.User.login) == login.lower()
         )
         record = await self.session.execute(query)
         user_orm = record.scalar()
-        if not record:
+        if not user_orm:
             return -1
         return user_orm.id_
 
@@ -114,8 +114,8 @@ class UserDAL(BaseTableDAL):
         Returns: bool
 
         """
-        query = select(orm.UserTable).where(
-            func.lower(orm.UserTable.login) == user.login.lower()
+        query = select(orm.User).where(
+            func.lower(orm.User.login) == user.login.lower()
         )
         record = await self.session.execute(query)
         user_orm = record.scalar()
@@ -144,7 +144,8 @@ class UserDAL(BaseTableDAL):
             password=user.password,
             salt=salt
         )
-        user_orm = orm.UserTable(
+        user_orm = orm.User(
+            name=user.name,
             login=user.login,
             hashed_password=f'{hashed_password}{HASH_SALT_DELIMITER}{salt}'
         )
