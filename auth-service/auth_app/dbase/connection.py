@@ -7,7 +7,6 @@ from sqlalchemy.orm import sessionmaker
 
 __all__ = [
     'CustomConnection',
-    'get_session',
 ]
 
 DBASE_URL_TEMPLATE = (
@@ -52,14 +51,3 @@ class CustomConnection:
 
         """
         return self.__async_session()
-
-
-async def get_session() -> AsyncSession:
-    """Return async session context.
-
-    Returns: AsyncSession
-
-    """
-    conn = CustomConnection()
-    async with conn.async_session as session:
-        yield session
