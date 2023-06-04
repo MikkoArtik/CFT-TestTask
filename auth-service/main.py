@@ -7,12 +7,14 @@ import uvicorn
 from fastapi import FastAPI
 
 from auth_app.models import Response
+from auth_app.routers import auth
 
 __all__ = []
 
 dotenv.load_dotenv()
 
 app = FastAPI()
+app.include_router(auth.router)
 
 
 @app.get('/ping')
