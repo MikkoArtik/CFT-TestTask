@@ -3,7 +3,6 @@
 import hashlib
 import random
 import string
-from typing import Union
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -75,26 +74,6 @@ class UserDAL(BaseDAL):
             session: AsyncSession
         """
         super().__init__(session=session)
-
-    async def get_by_id(self, id_: int) -> Union[models.User, None]:
-        """Return user information by id.
-
-        Args:
-            id_: int
-
-        Returns: pydantic User model
-
-        """
-        query = select(orm.User).where(orm.User.id_ == id_)
-        record = await self.session.execute(query)
-        user_orm = record.scalar()
-        if not user_orm:
-            return
-        return models.User(
-            name=user_orm.name,
-            login=user_orm.login,
-            password=user_orm.hashed_password
-        )
 
     async def get_id_by_login(self, login: str) -> int:
         """Return record id by login.
