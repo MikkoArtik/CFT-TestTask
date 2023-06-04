@@ -21,9 +21,9 @@ services:
         healthcheck:
             test: [ "CMD-SHELL",
                     "pg_isready 
-                    -h metastorage-dbase-server 
+                    -h dbase-service 
                     -p 5678 
-                    -d test-dbase 
+                    -d staff-dbase 
                     -U mikko"
             ]
             interval: 10s
