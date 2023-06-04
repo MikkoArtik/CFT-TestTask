@@ -2,6 +2,7 @@
 
 from fastapi import APIRouter, Depends
 from fastapi.exceptions import HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth_app import models
@@ -21,31 +22,36 @@ router = APIRouter(
 
 
 @router.post('/', response_model=models.Token)
-async def auth(user: models.User,
+async def auth(auth_form: OAuth2PasswordRequestForm = Depends(),
                session: AsyncSession = Depends(get_session)) -> models.Token:
     """Return token after auth.
 
     Args:
-        user: pydantic User model
+        auth_form: OAuth2PasswordRequestForm
         session: AsyncSession
 
     Returns: pydantic Token model
 
     """
     user_dal = UserDAL(session=session)
-    if not await user_dal.is_exist(login=user.login):
+    if not await user_dal.is_exist(login=auth_form.username):
         raise HTTPException(
             status_code=400,
             detail='Login not found'
         )
-    if not await user_dal.is_valid_login_password_pair(user=user):
+    if not await user_dal.is_valid_login_password_pair(
+        user=models.UserAuth(
+            login=auth_form.username,
+            password=auth_form.password
+        )
+    ):
         raise HTTPException(
             status_code=400,
             detail='Incorrect login or password'
         )
     token_dal = TokenDAL(session=session)
 
-    user_id = await user_dal.get_id_by_login(login=user.login)
+    user_id = await user_dal.get_id_by_login(login=auth_form.username)
     await token_dal.add(user_id=user_id)
 
     return await token_dal.get_by_user_id(id_=user_id)
