@@ -83,6 +83,6 @@ class SalaryDAL(BaseDAL):
         return models.SalaryInfo(
             user_id=id_,
             name=user_orm.name,
-            value=salary_orm.salary,
+            value=salary_orm.value,
             target_date=salary_orm.target_date
         )
