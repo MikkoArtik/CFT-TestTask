@@ -27,16 +27,16 @@ class TokenDAL(BaseDAL):
         """
         super().__init__(session=session)
 
-    async def delete(self, token: str) -> bool:
+    async def delete(self, token_value: str) -> bool:
         """Remove token from database by token value.
 
         Args:
-            token: str
+            token_value: str
 
         Returns: bool
 
         """
-        query = delete(orm.Token).where(orm.Token.token == token)
+        query = delete(orm.Token).where(orm.Token.value == token_value)
         await self.session.execute(query)
         return await self.is_success_changing_query()
 
