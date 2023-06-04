@@ -4,7 +4,7 @@ This module contains models with database fields.
 
 """
 
-from datetime import MINYEAR, date, datetime
+from datetime import date, datetime
 from typing import List
 
 from pydantic import BaseModel, Field
@@ -80,15 +80,13 @@ class Token(CustomBaseModel):
     """Model with token information.
 
     Args:
-        token: user login
+        value: user login
         expires: user password
 
     """
-    token: str = Field(alias='AccessToken', default='')
-    expires: datetime = Field(
-        alias='Expires',
-        default=datetime(year=MINYEAR, month=1, day=1)
-    )
+    value: str = Field(alias='access_token')
+    expires: datetime = Field(alias='expires')
+    token_type: str = Field(alias='token_type', default='Bearer')
 
     @property
     def is_valid(self) -> bool:
@@ -103,5 +101,5 @@ class ActiveUser(CustomBaseModel):
 class SalaryInfo(CustomBaseModel):
     user_id: int = Field(alias='UserID')
     name: str = Field(alias='Name')
-    salary: int = Field(alias='Salary')
+    value: int = Field(alias='Salary')
     target_date: date = Field(alias='TargetDate')
