@@ -56,16 +56,16 @@ class TokenDAL(BaseDAL):
             return models.Token()
         return models.Token(token=token_orm.token, expires=token_orm.expires)
 
-    async def get_user_id(self, token: str) -> int:
+    async def get_user_id(self, token_value: str) -> int:
         """Return user id by token value.
 
         Args:
-            token: str
+            token_value: str
 
         Returns: int
 
         """
-        query = select(orm.Token).where(orm.Token.token == token)
+        query = select(orm.Token).where(orm.Token.value == token_value)
         record = await self.session.execute(query)
         token_orm = record.scalar()
         if not token_orm:
