@@ -77,7 +77,7 @@ class TokenDAL(BaseDAL):
         return token_orm.user_id
 
     async def add(self, user_id: int) -> bool:
-        """Add token to database by user id.
+        """Generate token to database for current user.
 
         Args:
             user_id: int
