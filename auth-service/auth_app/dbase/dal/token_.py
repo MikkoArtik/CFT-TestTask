@@ -1,6 +1,7 @@
 """Module with Token database table operations."""
 
 from datetime import datetime, timedelta
+from typing import Union
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -40,21 +41,24 @@ class TokenDAL(BaseDAL):
         await self.session.execute(query)
         return await self.is_success_changing_query()
 
-    async def get_by_user_id(self, id_: int) -> models.Token:
+    async def get_by_user_id(self, id_: int) -> Union[models.Token, None]:
         """Return token by user id.
 
         Args:
             id_: int
 
-        Returns: str
+        Returns: pydantic Token model
 
         """
         query = select(orm.Token).where(orm.Token.user_id == id_)
         record = await self.session.execute(query)
         token_orm = record.scalar()
         if not token_orm:
-            return models.Token()
-        return models.Token(token=token_orm.token, expires=token_orm.expires)
+            return
+        return models.Token(
+            value=token_orm.value,
+            expires=token_orm.expires
+        )
 
     async def get_user_id(self, token_value: str) -> int:
         """Return user id by token value.
