@@ -51,6 +51,18 @@ class Response(CustomBaseModel):
     data: List = Field(alias='Data', default=[])
 
 
+class UserAuth(CustomBaseModel):
+    """Model with user auth parameters.
+
+    Args:
+        login: user login
+        password: user password
+
+    """
+    login: str = Field(alias='Login', min_length=5, max_length=20)
+    password: str = Field(alias='Password', min_length=1, max_length=10)
+
+
 class User(CustomBaseModel):
     """Model with user information.
 
