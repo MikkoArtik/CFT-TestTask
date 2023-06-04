@@ -30,26 +30,27 @@ async def get_session() -> AsyncSession:
 
 
 async def get_active_user(
-        token: models.Token = Depends(oauth2_scheme),
+        token_value: str = Depends(oauth2_scheme),
         session: AsyncSession = Depends(get_session)
 ) -> models.ActiveUser:
     """Return active user information after authorization.
 
     Args:
-        token: pydantic model Token
+        token_value: pydantic model Token
         session: AsyncSession
 
-    Returns: pydantic model ActiveUser
+    Returns: pydantic ActiveUser model
 
     """
     token_dal = TokenDAL(session=session)
-    user_id = await token_dal.get_user_id(token=token.token)
+    user_id = await token_dal.get_user_id(token_value=token_value)
     if user_id < 0:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Invalid authentication credentials'
         )
 
+    token = await token_dal.get_by_user_id(id_=user_id)
     if not token.is_valid:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
