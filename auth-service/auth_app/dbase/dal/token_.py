@@ -53,8 +53,24 @@ class TokenDAL(BaseTableDAL):
         record = await self.session.execute(query)
         token_orm = record.scalar()
         if not token_orm:
-            return ''
-        return token_orm.token
+            return models.Token()
+        return models.Token(token=token_orm.token, expires=token_orm.expires)
+
+    async def get_user_id(self, token: str) -> int:
+        """Return user id by token value.
+
+        Args:
+            token: str
+
+        Returns: int
+
+        """
+        query = select(orm.Token).where(orm.Token.token == token)
+        record = await self.session.execute(query)
+        token_orm = record.scalar()
+        if not token_orm:
+            return -1
+        return token_orm.user_id
 
     async def add(self, user_id: int) -> bool:
         """Add token to database by user id.
@@ -70,9 +86,8 @@ class TokenDAL(BaseTableDAL):
         if not current_token:
             is_create = True
         else:
-            is_valid_token = await self.is_valid(token=current_token)
-            if not is_valid_token:
-                await self.delete(token=current_token)
+            if not current_token.is_valid:
+                await self.delete(token=current_token.token)
                 is_create = True
 
         if is_create:
