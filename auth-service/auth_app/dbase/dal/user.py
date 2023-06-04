@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth_app import models
 from auth_app.dbase import orm
-from auth_app.dbase.dal.base import BaseTableDAL
+from auth_app.dbase.dal.base import BaseDAL
 
 __all__ = [
     'UserDAL',
@@ -65,7 +65,7 @@ def is_valid_password(password: str, hashed_password: str) -> bool:
     return get_hashed_password(password, salt) == hashed_password
 
 
-class UserDAL(BaseTableDAL):
+class UserDAL(BaseDAL):
     """Class with user table methods."""
 
     def __init__(self, session: AsyncSession):

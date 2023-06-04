@@ -4,11 +4,11 @@ from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 __all__ = [
-    'BaseTableDAL',
+    'BaseDAL',
 ]
 
 
-class BaseTableDAL:
+class BaseDAL:
     """Class which save changing query."""
 
     def __init__(self, session: AsyncSession):

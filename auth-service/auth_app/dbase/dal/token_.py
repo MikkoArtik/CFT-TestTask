@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth_app import models
 from auth_app.dbase import orm
-from auth_app.dbase.dal.base import BaseTableDAL
+from auth_app.dbase.dal.base import BaseDAL
 
 __all__ = [
     'TokenDAL',
@@ -16,7 +16,7 @@ __all__ = [
 EXPIRES_SIZE = timedelta(minutes=5)
 
 
-class TokenDAL(BaseTableDAL):
+class TokenDAL(BaseDAL):
     """Class with token table methods."""
 
     def __init__(self, session: AsyncSession):
