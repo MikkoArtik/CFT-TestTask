@@ -105,11 +105,12 @@ class UserDAL(BaseDAL):
         id_value = await self.get_id_by_login(login=login)
         return id_value != -1
 
-    async def is_valid_login_password_pair(self, user: models.User) -> bool:
+    async def is_valid_login_password_pair(self,
+                                           user: models.UserAuth) -> bool:
         """Return validation by login and password.
 
         Args:
-            user: pydantic User model
+            user: pydantic UserAuth model
 
         Returns: bool
 
