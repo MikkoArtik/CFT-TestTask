@@ -10,7 +10,7 @@ from auth_app.dbase.dal.token_ import TokenDAL
 from auth_app.dbase.dal.user import UserDAL, generate_random_string
 
 
-class TestAuth:
+class TestAuthRoute:
     @pytest.mark.asyncio
     async def test_invalid_username(self, get_dbase_session):
         request_data = {

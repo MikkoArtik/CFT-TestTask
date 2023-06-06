@@ -2,13 +2,14 @@ from unittest.mock import Mock, patch
 
 import pytest
 from hamcrest import assert_that, equal_to, is_
-from helpers import generate_invalid_passwords, generate_valid_passwords
 from sqlalchemy import select
 
 from auth_app import models
 from auth_app.dbase import orm
 from auth_app.dbase.dal.user import (UserDAL, generate_random_string,
                                      get_hashed_password, is_valid_password)
+
+from .helpers import generate_invalid_passwords, generate_valid_passwords
 
 
 @pytest.mark.parametrize('length', [0, 1, 10, 20])
