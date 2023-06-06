@@ -77,8 +77,6 @@ class SalaryDAL(BaseDAL):
         query = select(orm.User).where(orm.User.id_ == id_)
         record = await self.session.execute(query)
         user_orm = record.scalar()
-        if not user_orm:
-            return
 
         return models.SalaryInfo(
             user_id=id_,
