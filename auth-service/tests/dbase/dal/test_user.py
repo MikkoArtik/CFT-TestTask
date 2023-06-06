@@ -55,7 +55,7 @@ def test_is_valid_password():
         )
 
 
-class TestUser:
+class TestUserDAL:
     user = models.User(
         name='test-user',
         login='test-name',
