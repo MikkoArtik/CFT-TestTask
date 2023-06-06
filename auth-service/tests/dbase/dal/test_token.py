@@ -1,13 +1,13 @@
-import pytest
-from hamcrest import assert_that, equal_to, is_
 import random
 from typing import List
 from uuid import uuid4
 
-from sqlalchemy import select, func
+import pytest
+from hamcrest import assert_that, equal_to, is_
+from sqlalchemy import func, select
 
-from auth_app.dbase import orm
 from auth_app import models
+from auth_app.dbase import orm
 from auth_app.dbase.dal.token_ import TokenDAL
 
 
