@@ -61,8 +61,8 @@ class UserAuth(CustomBaseModel):
         password: user password
 
     """
-    login: str = Field(alias='Login', min_length=5, max_length=20)
-    password: str = Field(alias='Password', min_length=1, max_length=10)
+    login: str = Field(alias='username', min_length=5, max_length=20)
+    password: str = Field(alias='password', min_length=1, max_length=10)
 
 
 class User(CustomBaseModel):
