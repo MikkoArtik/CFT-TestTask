@@ -128,3 +128,15 @@ class SalaryInfo(CustomBaseModel):
     name: str = Field(alias='Name')
     value: int = Field(alias='Salary')
     target_date: date = Field(alias='TargetDate')
+
+
+class UserSalary(CustomBaseModel):
+    """Model with salary information for current user.
+
+    Args:
+        value: salary value
+        target_date: salary increase date
+
+    """
+    value: int = Field(alias='Value')
+    target_date: date = Field(alias='TargetDate')
