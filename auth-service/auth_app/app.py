@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 
 from auth_app.models import Response
-from auth_app.routers import auth, salary
+from auth_app.routers import auth, salary, user
 
 __all__ = [
     'app',
@@ -12,6 +12,7 @@ __all__ = [
 app = FastAPI()
 app.include_router(auth.router)
 app.include_router(salary.router)
+app.include_router(user.router)
 
 
 @app.get('/ping', response_model=Response)
