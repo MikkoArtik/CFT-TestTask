@@ -38,8 +38,8 @@ class SalaryDAL(BaseDAL):
             orm.Salary.user_id == salary_info.user_id
         )
         record = await self.session.execute(query)
-        staff_orm = record.scalar()
-        if not staff_orm:
+        salary_orm = record.scalar()
+        if not salary_orm:
             self.session.add(
                 orm.Salary(
                     user_id=salary_info.user_id,
