@@ -1,0 +1,9 @@
+# Folders
+tests
+__pycache__
+.pytest_cache
+
+# Files
+poetry.lock
+.env
+Dockerfile
