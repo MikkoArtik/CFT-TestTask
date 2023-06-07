@@ -9,7 +9,8 @@ from auth_app.dbase import orm
 from auth_app.dbase.dal.user import (UserDAL, generate_random_string,
                                      get_hashed_password, is_valid_password)
 
-from .helpers import generate_invalid_passwords, generate_valid_passwords
+from .helpers import (create_test_user, generate_invalid_passwords,
+                      generate_valid_passwords)
 
 
 @pytest.mark.parametrize('length', [0, 1, 10, 20])
@@ -50,59 +51,73 @@ def test_is_valid_password():
 
 
 class TestUserDAL:
-    user = models.User(
-        name='test-user',
-        login='test-name',
-        password='some-pass'
-    )
 
     @pytest.mark.asyncio
     async def test_add(self, get_dbase_session):
+        user = create_test_user()
+
         dal = UserDAL(session=get_dbase_session)
-        is_success = await dal.add(user=self.user)
+        is_success = await dal.add(user=user)
 
         assert_that(
             actual_or_assertion=is_success,
             matcher=is_(True)
         )
 
-        query = select(orm.User.login).where(orm.User.name == self.user.name)
+        query = select(orm.User.login).where(orm.User.name == user.name)
         record = await get_dbase_session.execute(query)
         assert_that(
             actual_or_assertion=record.scalar(),
-            matcher=equal_to(self.user.login)
+            matcher=equal_to(user.login)
         )
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize('is_valid', [True, False])
-    async def test_is_valid_login_password_pair(self, get_dbase_session,
-                                                is_valid: bool):
-        if is_valid:
+    @pytest.mark.parametrize(
+        'is_good_login, is_good_password',
+        [[True, True], [True, False], [False, False]]
+    )
+    async def test_is_valid_login_password_pair(
+            self, get_dbase_session, is_good_login: bool,
+            is_good_password: bool
+    ):
+        user = create_test_user()
+        user_dal = UserDAL(session=get_dbase_session)
+        await user_dal.add(user=user)
+
+        if not is_good_login:
             auth_info = models.UserAuth(
-                login=self.user.login,
-                password=self.user.password
+                login=create_test_user().login,
+                password=user.password
+            )
+        elif not is_good_password:
+            auth_info = models.UserAuth(
+                login=user.login,
+                password=create_test_user().password
             )
         else:
             auth_info = models.UserAuth(
-                login=self.user.login,
-                password=self.user.password + 'q'
+                login=user.login,
+                password=user.password
             )
 
-        dal = UserDAL(session=get_dbase_session)
-        actual_is_valid = await dal.is_valid_login_password_pair(
+        actual_is_valid = await user_dal.is_valid_login_password_pair(
             user=auth_info
         )
 
         assert_that(actual_or_assertion=actual_is_valid,
-                    matcher=is_(is_valid))
+                    matcher=is_(is_good_login and is_good_password))
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize('is_exist', [True, False])
     async def test_is_exist(self, get_dbase_session, is_exist: bool):
+        user = create_test_user()
+        user_dal = UserDAL(session=get_dbase_session)
+        await user_dal.add(user=user)
+
         if is_exist:
-            login = self.user.login
+            login = user.login
         else:
-            login = self.user.login + 'q'
+            login = create_test_user().login
 
         dal = UserDAL(session=get_dbase_session)
         actual_is_exist = await dal.is_exist(login=login)
@@ -114,13 +129,16 @@ class TestUserDAL:
     @pytest.mark.asyncio
     @pytest.mark.parametrize('is_exist', [True, False])
     async def test_get_id_by_login(self, get_dbase_session, is_exist: bool):
-        if is_exist:
-            login = self.user.login
-        else:
-            login = self.user.login + 'q'
+        user = create_test_user()
+        user_dal = UserDAL(session=get_dbase_session)
+        await user_dal.add(user=user)
 
-        dal = UserDAL(session=get_dbase_session)
-        id_value = await dal.get_id_by_login(login=login)
+        if is_exist:
+            login = user.login
+        else:
+            login = create_test_user().login
+
+        id_value = await user_dal.get_id_by_login(login=login)
 
         if not is_exist:
             assert_that(
@@ -138,17 +156,20 @@ class TestUserDAL:
     @pytest.mark.asyncio
     @pytest.mark.parametrize('is_exist', [True, False])
     async def test_get_by_id(self, get_dbase_session, is_exist: bool):
-        dal = UserDAL(session=get_dbase_session)
+        user = create_test_user()
+        user_dal = UserDAL(session=get_dbase_session)
+        await user_dal.add(user=user)
+
         if is_exist:
-            id_value = await dal.get_id_by_login(login=self.user.login)
+            id_value = await user_dal.get_id_by_login(login=user.login)
         else:
             id_value = -1
 
-        active_user = await dal.get_by_id(id_=id_value)
+        active_user = await user_dal.get_by_id(id_=id_value)
         if is_exist:
             assert_that(
                 actual_or_assertion=active_user.name,
-                matcher=equal_to(self.user.name)
+                matcher=equal_to(user.name)
             )
         else:
             assert_that(
