@@ -21,7 +21,7 @@ router = APIRouter(
 )
 
 
-@router.post('/', response_model=models.Token)
+@router.post('/', response_model=models.Token, include_in_schema=False)
 async def auth(auth_form: OAuth2PasswordRequestForm = Depends(),
                session: AsyncSession = Depends(get_session)) -> models.Token:
     """Return token after auth.
