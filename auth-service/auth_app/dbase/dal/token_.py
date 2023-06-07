@@ -28,18 +28,33 @@ class TokenDAL(BaseDAL):
         """
         super().__init__(session=session)
 
-    async def delete(self, token_value: str) -> bool:
-        """Remove token from database by token value.
+    async def add(self, user_id: int) -> bool:
+        """Generate token to database for current user.
 
         Args:
-            token_value: str
+            user_id: int
 
         Returns: bool
 
         """
-        query = delete(orm.Token).where(orm.Token.value == token_value)
-        await self.session.execute(query)
-        return await self.is_success_changing_query()
+        current_token = await self.get_by_user_id(id_=user_id)
+        is_create = False
+        if not current_token:
+            is_create = True
+        else:
+            if not current_token.is_valid:
+                await self.delete(token_value=current_token.value)
+                is_create = True
+
+        if is_create:
+            token = orm.Token(
+                expires=datetime.now() + EXPIRES_SIZE,
+                user_id=user_id
+            )
+            self.session.add(token)
+            return await self.is_success_changing_query()
+        else:
+            return True
 
     async def get_by_user_id(self, id_: int) -> Union[models.Token, None]:
         """Return token by user id.
@@ -76,30 +91,15 @@ class TokenDAL(BaseDAL):
             return -1
         return token_orm.user_id
 
-    async def add(self, user_id: int) -> bool:
-        """Generate token to database for current user.
+    async def delete(self, token_value: str) -> bool:
+        """Remove token from database by token value.
 
         Args:
-            user_id: int
+            token_value: str
 
         Returns: bool
 
         """
-        current_token = await self.get_by_user_id(id_=user_id)
-        is_create = False
-        if not current_token:
-            is_create = True
-        else:
-            if not current_token.is_valid:
-                await self.delete(token_value=current_token.value)
-                is_create = True
-
-        if is_create:
-            token = orm.Token(
-                expires=datetime.now() + EXPIRES_SIZE,
-                user_id=user_id
-            )
-            self.session.add(token)
-            return await self.is_success_changing_query()
-        else:
-            return True
+        query = delete(orm.Token).where(orm.Token.value == token_value)
+        await self.session.execute(query)
+        return await self.is_success_changing_query()
