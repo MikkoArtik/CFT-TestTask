@@ -36,22 +36,16 @@ def test_get_hashed_password(pbkdf2_hmac_mock: Mock, password: str, salt: str):
 
 
 def test_is_valid_password():
-    valid_passwords = generate_valid_passwords(count=20)
-    for password, salt, encoded_password in valid_passwords:
-        assert_that(
-            actual_or_assertion=is_valid_password(
-                password=password, hashed_password=encoded_password
-            ),
-            matcher=is_(True)
-        )
+    passwords = []
+    passwords += [x + [True] for x in generate_valid_passwords()]
+    passwords += [x + [False] for x in generate_invalid_passwords()]
 
-    invalid_passwords = generate_invalid_passwords(count=20)
-    for password, salt, encoded_password in invalid_passwords:
+    for password, salt, encoded_password, is_valid in passwords:
         assert_that(
             actual_or_assertion=is_valid_password(
                 password=password, hashed_password=encoded_password
             ),
-            matcher=is_(False)
+            matcher=is_(is_valid)
         )
 
 
