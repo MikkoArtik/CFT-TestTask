@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "auth_app"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "3.8.12"
 fastapi = "^0.95.2"
 pydantic = "^1.10.8"
 uvicorn = "^0.22.0"
