@@ -5,7 +5,9 @@ from fastapi import FastAPI
 from auth_app.models import Response
 from auth_app.routers import auth, salary
 
-__all__ = []
+__all__ = [
+    'app',
+]
 
 app = FastAPI()
 app.include_router(auth.router)
