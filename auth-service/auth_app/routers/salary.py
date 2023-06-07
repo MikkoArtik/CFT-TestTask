@@ -39,6 +39,7 @@ async def get_salary(
             status_code=400,
             detail='User not found'
         )
+
     salary_dal = SalaryDAL(session=session)
     salary_info = await salary_dal.get_by_user_id(id_=user.id_)
     if not salary_info:

@@ -14,7 +14,7 @@ app.include_router(auth.router)
 app.include_router(salary.router)
 
 
-@app.get('/ping')
+@app.get('/ping', response_model=Response)
 async def check_service_alive() -> Response:
     """Return ping-pong response.
 
