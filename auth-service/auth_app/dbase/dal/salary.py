@@ -37,8 +37,7 @@ class SalaryDAL(BaseDAL):
         query = select(orm.Salary).where(
             orm.Salary.user_id == salary_info.user_id
         )
-        record = await self.session.execute(query)
-        salary_orm = record.scalar()
+        salary_orm = (await self.session.execute(query)).scalar()
         if not salary_orm:
             self.session.add(
                 orm.Salary(
@@ -69,14 +68,12 @@ class SalaryDAL(BaseDAL):
 
         """
         query = select(orm.Salary).where(orm.Salary.user_id == id_)
-        record = await self.session.execute(query)
-        salary_orm = record.scalar()
+        salary_orm = (await self.session.execute(query)).scalar()
         if not salary_orm:
             return
 
         query = select(orm.User).where(orm.User.id_ == id_)
-        record = await self.session.execute(query)
-        user_orm = record.scalar()
+        user_orm = (await self.session.execute(query)).scalar()
 
         return models.SalaryInfo(
             user_id=id_,

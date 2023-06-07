@@ -28,6 +28,39 @@ class TokenDAL(BaseDAL):
         """
         super().__init__(session=session)
 
+    async def get_by_user_id(self, id_: int) -> Union[models.Token, None]:
+        """Return token by user id.
+
+        Args:
+            id_: int
+
+        Returns: pydantic Token model
+
+        """
+        query = select(orm.Token).where(orm.Token.user_id == id_)
+        token_orm = (await self.session.execute(query)).scalar()
+        if not token_orm:
+            return
+        return models.Token(
+            value=token_orm.value,
+            expires=token_orm.expires
+        )
+
+    async def get_user_id(self, token_value: str) -> int:
+        """Return user id by token value.
+
+        Args:
+            token_value: str
+
+        Returns: int
+
+        """
+        query = select(orm.Token).where(orm.Token.value == token_value)
+        token_orm = (await self.session.execute(query)).scalar()
+        if not token_orm:
+            return -1
+        return token_orm.user_id
+
     async def add(self, user_id: int) -> bool:
         """Generate token to database for current user.
 
@@ -55,41 +88,6 @@ class TokenDAL(BaseDAL):
             return await self.is_success_changing_query()
         else:
             return True
-
-    async def get_by_user_id(self, id_: int) -> Union[models.Token, None]:
-        """Return token by user id.
-
-        Args:
-            id_: int
-
-        Returns: pydantic Token model
-
-        """
-        query = select(orm.Token).where(orm.Token.user_id == id_)
-        record = await self.session.execute(query)
-        token_orm = record.scalar()
-        if not token_orm:
-            return
-        return models.Token(
-            value=token_orm.value,
-            expires=token_orm.expires
-        )
-
-    async def get_user_id(self, token_value: str) -> int:
-        """Return user id by token value.
-
-        Args:
-            token_value: str
-
-        Returns: int
-
-        """
-        query = select(orm.Token).where(orm.Token.value == token_value)
-        record = await self.session.execute(query)
-        token_orm = record.scalar()
-        if not token_orm:
-            return -1
-        return token_orm.user_id
 
     async def delete(self, token_value: str) -> bool:
         """Remove token from database by token value.

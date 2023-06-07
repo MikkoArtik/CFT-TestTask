@@ -86,8 +86,7 @@ class UserDAL(BaseDAL):
 
         """
         query = select(orm.User).where(orm.User.id_ == id_)
-        record = await self.session.execute(query)
-        user_orm = record.scalar()
+        user_orm = (await self.session.execute(query)).scalar()
         if not user_orm:
             return
         return models.ActiveUser(
@@ -107,8 +106,7 @@ class UserDAL(BaseDAL):
         query = select(orm.User).where(
             func.lower(orm.User.login) == login.lower()
         )
-        record = await self.session.execute(query)
-        user_orm = record.scalar()
+        user_orm = (await self.session.execute(query)).scalar()
         if not user_orm:
             return -1
         return user_orm.id_
@@ -138,8 +136,7 @@ class UserDAL(BaseDAL):
         query = select(orm.User).where(
             func.lower(orm.User.login) == user.login.lower()
         )
-        record = await self.session.execute(query)
-        user_orm = record.scalar()
+        user_orm = (await self.session.execute(query)).scalar()
         if not user_orm:
             return False
         return is_valid_password(
