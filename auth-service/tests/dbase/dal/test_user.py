@@ -26,14 +26,13 @@ def test_generate_random_string(length: int):
 @patch('hashlib.pbkdf2_hmac')
 def test_get_hashed_password(pbkdf2_hmac_mock: Mock, password: str, salt: str):
     get_hashed_password(password=password, salt=salt)
-
     pbkdf2_hmac_mock.assert_called_once_with(
         hash_name='sha256',
         password=password.encode(),
         salt=salt.encode(),
         iterations=20000
     )
-    pbkdf2_hmac_mock.hex.aasert_called_ones()
+    pbkdf2_hmac_mock.return_value.hex.assert_called_once_with()
 
 
 def test_is_valid_password():
