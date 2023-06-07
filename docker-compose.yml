@@ -29,3 +29,26 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
+
+    app-service:
+        build:
+            context: ./auth-service
+            dockerfile: Dockerfile
+        image:  cft-app-image
+        container_name: cft-app-container
+        environment:
+            - POSTGRES_HOST=dbase-service
+            - POSTGRES_PORT=5678
+            - POSTGRES_USER=mikko
+            - POSTGRES_PASSWORD=masterkey
+            - POSTGRES_DB=staff-dbase
+            - APP_HOST=app-service
+            - APP_PORT=8133
+        volumes:
+            - ./auth-service:/service
+        ports:
+            - "8253:8133"
+        command: -p 8133
+        depends_on:
+            dbase-service:
+                condition: service_healthy
