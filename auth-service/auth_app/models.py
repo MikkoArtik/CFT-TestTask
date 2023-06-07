@@ -27,6 +27,8 @@ def format_date(value: date) -> str:
 
 
 class CustomBaseModel(BaseModel):
+    """Base model."""
+
     class Config:
         """Model configuration."""
 
@@ -43,7 +45,7 @@ class Response(CustomBaseModel):
     Args:
         status: response status
         message: description with response action
-        data: info about deposit area name
+        data: array with something
 
     """
     status: bool = Field(alias='Status', default=True)
@@ -67,6 +69,7 @@ class User(CustomBaseModel):
     """Model with user information.
 
     Args:
+        name: name of user
         login: user login
         password: user password
 
@@ -82,6 +85,7 @@ class Token(CustomBaseModel):
     Args:
         value: user login
         expires: user password
+        token_type: default Bearer
 
     """
     value: str = Field(alias='access_token')
@@ -90,15 +94,36 @@ class Token(CustomBaseModel):
 
     @property
     def is_valid(self) -> bool:
+        """Return token validation.
+
+        Returns: bool
+
+        """
         return datetime.now() < self.expires
 
 
 class ActiveUser(CustomBaseModel):
+    """Model with active user information.
+
+    Args:
+        id_: user id
+        name: name of user
+
+    """
     id_: int = Field(alias='UserID')
     name: str = Field(alias='Name')
 
 
 class SalaryInfo(CustomBaseModel):
+    """Model with salary information for current user.
+
+    Args:
+        user_id: user id
+        name: name of user
+        value: salary value
+        target_date: salary increase date
+
+    """
     user_id: int = Field(alias='UserID')
     name: str = Field(alias='Name')
     value: int = Field(alias='Salary')
